@@ -32,7 +32,7 @@ function automate(src_map::Dict{Symbol, Function}; interval = 1)
     Timer((timer)->src_map[status().src](), 0, interval = interval)
 end
 
-function autopreomp_mainsonly()
+function autopreomp_notbattery()
     t = automate(
         Dict(   :Battery =>     ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=0,
                 :External =>    ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=1
