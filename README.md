@@ -14,7 +14,7 @@ pkg> add https://github.com/ianshmean/PowerMonitor.jl
 ```julia
 julia> import PowerMonitor
 julia> PowerMonitor.status()
-PowerMonitor.PowerStatus(:External, 84.0)
+PowerMonitor.PowerStatus(:charging, 84.0)
 ```
 
 ## Automation
