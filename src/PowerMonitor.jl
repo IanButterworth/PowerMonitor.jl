@@ -1,41 +1,54 @@
 module PowerMonitor
 
+import battery_cli_jll: battery
+
 Base.@kwdef mutable struct PowerStatus
-    src::Symbol = :none
+    pow_stat::Symbol = :none
     perc::Float64 = 0
 end
 
+function status(;show_raw = false)
+    pow_stat = nothing
+    perc = 0
+    iob = IOBuffer()
+    good = battery() do battery_cmd
+        success(pipeline(`$(battery_cmd)`, iob))
+    end
+    !good && return PowerStatus(:nobatteries, 100)
+    lines = split(String(take!(iob)), "\n")
+    st = lines[1] # just use first battery for now
+    show_raw && @info lines
+    pow_stat = parse_charge_status(st)
+    perc = parse_perc(st)
+    return PowerStatus(pow_stat, perc)
+end
+
+function parse_charge_status(st::AbstractString)::Union{Symbol,Nothing}
+    occursin("Charging", st) && return :charging
+    occursin("Full", st) && return :full
+    occursin("Discharging", st) && return :discharging
+    occursin("Unknown", st) && return :unknown
+    error("Cannot find charge st in: $st")
+end
+function parse_perc(st::AbstractString)::Float64
+    parse(Float64, split(split(st, ",")[2], "%")[1])
+end
+
+### AUTOMATION
 const timers = Timer[]
 
-function status()
-    @static if Sys.isapple()
-        lines = collect(split(read(`pmset -g batt`, String), "\n"))
-        src = split(lines[1], "'")[2] == "Battery Power" ? :Battery : :External
-        perc = parse(Float64, split(split(lines[2], "\t")[2], "%")[1])
-        return PowerStatus(src, perc)
-    elseif Sys.islinux()
-        lines = collect(split(read(`upower -i /org/freedesktop/UPower/devices/battery_BAT0`, String), "\n"))
-        ps = PowerStatus()
-        for line in lines
-            if occursin("state:", line)
-                ps.perc = parse(Float64, split(split(strip(line), "\t")[2], "%")[1]) == "discharging" ? :Battery : :External
-            end
-            if occursin("percentage:", line)
-                ps.perc = parse(Float64, split(split(strip(line), "\t")[2], "%")[1])
-            end
-        end
-        return ps
-    end
-end
-#
 function automate(src_map::Dict{Symbol, Function}; interval = 1)
-    Timer((timer)->src_map[status().src](), 0, interval = interval)
+    Timer((timer)->src_map[status().pow_stat](), 0, interval = interval)
 end
 
 function autopreomp_notbattery()
+    status().pow_stat == :nobatteries && error("This system reports that no batteries are present")
     t = automate(
-        Dict(   :Battery =>     ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=0,
-                :External =>    ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=1
+        Dict(   :nobatteries => ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=1,
+                :charging =>    ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=1,
+                :full =>        ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=1,
+                :discharging => ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=0,
+                :unknown =>     ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=0,
             );
             interval = 1
         )

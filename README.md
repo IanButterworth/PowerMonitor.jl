@@ -1,6 +1,8 @@
 # PowerMonitor.jl
  System power monitoring and automation
 
+ Uses https://github.com/distatus/battery
+
 
 ## Installation
 
@@ -18,7 +20,15 @@ PowerMonitor.PowerStatus(:External, 84.0)
 ## Automation
 ```julia
 import PowerMonitor
-PowerMonitor.automate(Dict(:Battery => ()->println("On Battery"), :External => ()->println("charging")); interval = 1)
+PowerMonitor.automate(
+        Dict(   :nobatteries => ()->println("Batteries not included"),
+                :charging =>    ()->println("Plugged in"),
+                :full =>        ()->println("Plugged in & full"),
+                :discharging => ()->println("On battery & discharging"),
+                :unknown =>     ()->nothing,
+            );
+            interval = 1
+        )
 ```
 
 To stop all automation:
