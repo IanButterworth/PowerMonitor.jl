@@ -13,7 +13,7 @@ end
 
 @testset "Automation: Auto-precomp" begin
     if CI
-        @test_throws ErrorException PowerMonitor.autopreomp_notbattery()
+        @test_throws ErrorException PowerMonitor.autoprecomp_notbattery()
     end
     PowerMonitor.stop_automation()
 end

@@ -42,5 +42,5 @@ Add this to `.julia/config/startup.jl` to disable Julia Pkg's auto-precompilatio
 
 ```julia
 import PowerMonitor
-PowerMonitor.autopreomp_notbattery()
+PowerMonitor.autoprecomp_notbattery()
 ```

@@ -41,7 +41,7 @@ function automate(src_map::Dict{Symbol, Function}; interval = 1)
     Timer((timer)->src_map[status().pow_stat](), 0, interval = interval)
 end
 
-function autopreomp_notbattery()
+function autoprecomp_notbattery()
     status().pow_stat == :nobatteries && error("This system reports that no batteries are present")
     t = automate(
         Dict(   :nobatteries => ()->ENV["JULIA_PKG_PRECOMPILE_AUTO"]=1,
