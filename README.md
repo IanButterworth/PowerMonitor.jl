@@ -7,7 +7,7 @@
 ## Installation
 
 ```
-pkg> add https://github.com/ianshmean/PowerMonitor.jl
+pkg> add PowerMonitor
 ```
 
 ## Power Monitoring
