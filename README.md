@@ -1,5 +1,5 @@
 # PowerMonitor.jl
- System power monitoring and automation
+ System power and battery status monitoring and automation in Julia
 
  Uses https://github.com/distatus/battery
 
