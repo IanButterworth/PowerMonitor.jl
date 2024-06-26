@@ -6,16 +6,23 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        julia-version: ['1', 'nightly']
+        julia-version:
+          - 'lts'
+          - 'pre'
+          - '1'
+          - 'nightly'
         julia-arch: [x64, x86]
         os: [ubuntu-latest, windows-latest, macOS-latest]
         exclude:
           - os: macOS-latest
             julia-arch: x86
+          - os: macOS-latest
+            julia-version: lts
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@releases/v2.2.0
         with:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/cache@v1
