@@ -17,5 +17,3 @@ end
     end
     PowerMonitor.stop_automation()
 end
-
-@test false
