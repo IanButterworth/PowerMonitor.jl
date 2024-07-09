@@ -19,5 +19,5 @@ jobs:
         with:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/cache@v2
-      - uses: julia-actions/julia-runtest@ib/hide_harness_stacktrace
+      - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
