@@ -19,5 +19,7 @@ jobs:
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.julia-version }}
-      - uses: julia-actions/cache@55b154e1212c2586e7bc8dfe150c3c15c932d224
+      - uses: julia-actions/cache@55b154e1212c2586e7bc8
+      - uses: julia-actions/julia-runtest@v1
+        continue-on-fail: true     
       - uses: julia-actions/julia-processcoverage@v1
