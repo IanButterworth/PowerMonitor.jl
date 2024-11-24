@@ -1,7 +1,7 @@
 name = "PowerMonitor"
 uuid = "9e7e054f-393b-40f5-81e8-49c2b2540836"
 authors = ["Ian <i.r.butterworth@gmail.com>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 battery_cli_jll = "dd074c01-bd9e-510d-b91d-361c690844c9"
